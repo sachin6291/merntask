@@ -1,9 +1,20 @@
 import React from 'react';
+import Login from './components/auth/Login'
+import SignUp from './components/auth/SignUp'
+import Projects from './components/project/Projects'
+
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 
 
 function App() {
   return (
-    <h1>MERNTask</h1>
+    <Router>
+      <Switch>
+        <Route exact path ="/" component={Login}/>
+        <Route exact path ="/sign-up" component={SignUp}/>
+        <Route exact path ="/projects" component={Projects}/>
+      </Switch>
+    </Router>
   );
 }
 
