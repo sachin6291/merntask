@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Project = ({project}) => {
-  const{name, id}= project
+  const{name}= project
   return ( 
     <li>
       <button
