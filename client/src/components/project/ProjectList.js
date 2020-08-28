@@ -15,7 +15,6 @@ const ProjectList = () => {
     getProjects()
   },[])
   
-  // console.log(projects)
   
   if (projects.length === 0) return (<p>Click on a New Project to start</p>)
 

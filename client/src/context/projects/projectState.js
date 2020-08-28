@@ -8,7 +8,9 @@ import {
   FORM_PROJECT,
   GET_PROJECTS,
   ADD_PROJECT,
-  VALIDATE_FORM
+  VALIDATE_FORM,
+  CURRENT_PROJECT,
+  DELETE_PROJECT
  }from '../../types'
 
 
@@ -16,7 +18,7 @@ const ProjectState = props => {
   
   const projects = [
     { id: 1, name: 'Online shop' },
-    { id: 2, name: 'Internet' },
+    { id: 2, name: 'Intarnet' },
     { id: 3, name: 'Web Design' },
     { id: 4, name: 'Basic CRUD' }
   ]
@@ -24,7 +26,8 @@ const ProjectState = props => {
   const initialState = {
     projects : [],
     form : false,
-    errorform: false
+    errorform: false,
+    project : null
   }
   //dispatch to execute the actions
   const [state, dispatch] = useReducer(projectReducer, initialState)
@@ -61,16 +64,35 @@ const ProjectState = props => {
     })
   }
 
+  //Select the project to work on from the project list
+  const currentProject = projectId=>{
+    dispatch({
+      type : CURRENT_PROJECT,
+      payload : projectId 
+    })
+  }
+
+  //Delete the selected project
+  const deleteProject = projectId =>{
+    dispatch({
+      type : DELETE_PROJECT,
+      payload : projectId
+    })
+  }
+
   return(
     <projectContext.Provider
       value={{
         projects: state.projects,
         form: state.form,
         errorform : state.errorform,
+        project : state.project,
         addNewProject,
         getProjects,
         addProject,
-        showError
+        showError,
+        currentProject,
+        deleteProject
       }}
     >
       {props.children}
