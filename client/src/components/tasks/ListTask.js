@@ -1,14 +1,19 @@
 import React, {Fragment, useContext} from 'react';
 import Task from './Task'
 import projectContext from '../../context/projects/projectContext'
+import taskContext from '../../context/tasks/taskContext'
 
 
 const ListTask = () => {
 
-  //get the project state in the context
+  //get the project state from the context
   const projectsContext = useContext(projectContext)
   const { project, deleteProject } = projectsContext
 
+  //get the task state from the context
+  const tasksContext = useContext(taskContext)
+  const { tasksproject } = tasksContext
+  
   // project is null
   if(!project)return(<h2>Select a Project</h2>)
 
@@ -17,12 +22,7 @@ const ListTask = () => {
 
   const {name, id}= selectedproject
 
-  const taskProject = [
-    { name: 'Select Platform', status: true },
-    { name: 'Select Theme', status: false },
-    { name: 'Select Payment system', status: false },
-    { name: 'Select Hosting', status: true },
-  ]
+  const taskProject = tasksproject 
   
 
   return ( 
@@ -32,7 +32,7 @@ const ListTask = () => {
     <ul className="listado-tareas">
       {taskProject.length === 0 
       ? (<li className="tarea"><p>There are no Tasks</p></li>)
-       : taskProject.map(task=>(<Task task={task}/>))}
+       : taskProject.map(task=>(<Task key={task.id} task={task}/>))}
     </ul>
     <button
       type="button"
