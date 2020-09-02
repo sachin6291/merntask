@@ -55,13 +55,58 @@ exports.updateProject = async(req,res)=>{
 
   try {
     //check the id
-    let project = Project.findById(req.params.id);
+    let project = await Project.findById(req.params.id);
+
     //check if project exists
+    if(!project){
+      return res.status(404).json({msg:"Project not found"})
+    }
+    
     //verify the creator of the project
+    if(project.user.toString() !== req.user.id){
+      return res.status(401).json({msg: "Unauthorized Access"})
+    }
+
     //update
+    project = await Project.findByIdAndUpdate({_id: req.params.id}, {$set: newProject}, {new:true})
+
+    res.json({project})
     
   } catch (error) {
     console.log(error)
     res.status(500).send('There has been an error in updateProject')
+  }
+}
+
+//delete a project
+exports.deleteProject = async(req,res)=>{
+
+  //check if there are errors in user
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+
+  try {
+    //check the id
+    let project = await Project.findById(req.params.id)
+
+    //check if project exists
+    if(!project){
+      return res.status(404).json({ msg: "Project not found" })
+    }
+
+    //verify the creator of the project
+    if(project.user.toString() !== req.user.id){
+      return res.status(401).json({msg: "Unauthorized Access"})
+    }
+
+    //delete
+    await Project.findOneAndRemove({_id:req.params.id})
+    res.json({msg : "Project Deleted"})
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).send('There has been an error in deleteProject')
   }
 }
