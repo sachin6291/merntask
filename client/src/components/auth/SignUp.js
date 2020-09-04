@@ -1,13 +1,28 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import alertContext from '../../context/alerts/alertContext';
+import authContext from '../../context/authentication/authContext'
 
-
-const SignUp = () => {
+const SignUp = (props) => {
 
   //Extract alertContext
   const alertsContext = useContext(alertContext)
   const {alert, showAlert} = alertsContext
+
+  //Extract authContext
+   const authsContext = useContext(authContext)
+   const { message, authentication, registerUser } = authsContext;
+
+  //in case that the user has authenticated or registered or is duplicate
+  useEffect(()=>{
+    if(authentication) {
+      props.history.push("/projects");
+    }
+
+    if(message){
+      showAlert(message.msg, message.category);
+    }
+  },[message, authentication, props.history])
 
   //Sign up State name = dom name
   const [user, setUser] = useState({
@@ -49,7 +64,9 @@ const SignUp = () => {
       showAlert('Both of your Password must be same', 'alerta-error')
       return
     }
+
     // pass it to action
+    registerUser({name, email, password})
 
   }
 
