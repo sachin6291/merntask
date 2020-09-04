@@ -1,7 +1,13 @@
- import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom'
+import alertContext from '../../context/alerts/alertContext';
+
 
 const SignUp = () => {
+
+  //Extract alertContext
+  const alertsContext = useContext(alertContext)
+  const {alert, showAlert} = alertsContext
 
   //Sign up State name = dom name
   const [user, setUser] = useState({
@@ -10,6 +16,7 @@ const SignUp = () => {
     password: '',
     confirm:''
   })
+
   //destructuring user
   const {name, email, password, confirm } = user
 
@@ -26,17 +33,33 @@ const SignUp = () => {
     e.preventDefault()
 
     //validate for no empty input
+    if (name.trim() === '' || email.trim() === '' || password.trim() === '' || confirm.trim() === '' ){
+      showAlert('All fields are required','alerta-error')
+      return
+    }
 
     //password min length = 6
+    if(password.length < 6){
+      showAlert('Your password must be at least 6 characters long', 'alerta-error')
+      return
+    }
 
     //crosscheck the 2 password
-
+    if (password !== confirm) {
+      showAlert('Both of your Password must be same', 'alerta-error')
+      return
+    }
     // pass it to action
 
   }
 
   return (
     <div className="form-usuario">
+      {alert? 
+        (<div className ={`alerta ${alert.category}`}>
+          {alert.msg}
+        </div>)
+        :null}
       <div className="contenedor-form sombra-dark">
         <h1>Sign up</h1>
         <form
