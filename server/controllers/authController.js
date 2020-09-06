@@ -53,7 +53,7 @@ exports.authenticateUser = async (req, res) =>{
 //check if the user is authenticated
 exports.authenticatedUser= async(req, res) =>{
   try {
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id).select('-password')
     res.json({user})
   } catch (error) {
     res.status(500).json({msg:'There has been an error in authenticatedUser'})

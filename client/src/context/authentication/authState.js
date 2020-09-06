@@ -3,6 +3,7 @@ import authContext from './authContext'
 import authReducer from './authReducer'
 
 import axiosClient from '../../config/axios'
+import tokenAuth from '../../config/tokenAuth'
 
 import {
   SUCCESSFUL_REGISTRY,
@@ -21,7 +22,8 @@ const AuthState = props =>{
     token: localStorage.getItem('token'),
     authentication: null,
     user : null,
-    message : null
+    message : null,
+    loading : true
   }
   const [state, dispatch] = useReducer(authReducer, initialState)
 
@@ -33,6 +35,7 @@ const AuthState = props =>{
         type: SUCCESSFUL_REGISTRY,
         payload: answer.data
       })
+      //get the user
       userAuthenticated()
     } catch (error) {
 
@@ -51,16 +54,48 @@ const AuthState = props =>{
   const userAuthenticated = async ()=>{
     const token = localStorage.getItem('token')
     if (token){
-
+      tokenAuth(token)
     }
     try {
       const answer = await axiosClient.get('/api/auth')
-      console.log(answer)
+      dispatch({
+        type: GET_USER,
+        payload:answer.data
+      })
     } catch (error) {
       dispatch({
         type: ERROR_LOGIN
       })
     }
+  }
+
+  //when the user starts a seccion
+  const logIn = async data=>{
+    
+    try {
+      const answer = await axiosClient.post('/api/auth', data)
+      dispatch({
+        type:SUCCESSFUL_LOGIN,
+        payload:answer.data
+      })
+      //get the user
+      userAuthenticated()
+    } catch (error) {
+
+      const alert = {
+        msg: error.response.data.msg,
+        category: 'alerta-error'
+      }
+      dispatch({
+        type: ERROR_LOGIN,
+        payload: alert
+      })
+    }
+  }
+  const signOff = ()=>{
+    dispatch({
+      type: SIGN_OFF
+    })
   }
 
   return(
@@ -70,7 +105,11 @@ const AuthState = props =>{
         authentication: state.authentication,
         user: state.user,
         message: state.message,
-        registerUser
+        loading : state.loading,
+        registerUser, 
+        logIn,
+        userAuthenticated,
+        signOff
       }}
     >
       {props.children}
