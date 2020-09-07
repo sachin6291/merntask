@@ -1,33 +1,26 @@
 import React, {useReducer} from 'react';
-
-import uuid from 'uuid'
-
 import  projectContext  from './projectContext'
 import projectReducer from './projectReducer'
+import axiosClient from '../../config/axios'
 import { 
   FORM_PROJECT,
   GET_PROJECTS,
   ADD_PROJECT,
   VALIDATE_FORM,
   CURRENT_PROJECT,
-  DELETE_PROJECT
+  DELETE_PROJECT,
+  ERROR_PROJECT
  }from '../../types'
 
 
 const ProjectState = props => {
   
-  const projects = [
-    { id: 1, name: 'Online shop' },
-    { id: 2, name: 'Intarnet' },
-    { id: 3, name: 'Web Design' },
-    { id: 4, name: 'Basic CRUD' }
-  ]
-
   const initialState = {
     projects : [],
     form : false,
     errorform: false,
-    project : null
+    project : null,
+    message : null
   }
   //dispatch to execute the actions
   const [state, dispatch] = useReducer(projectReducer, initialState)
@@ -40,30 +33,54 @@ const ProjectState = props => {
   }
 
   //get the projects
-  const getProjects =()=>{
-    dispatch({
-      type: GET_PROJECTS,
-      payload: projects
-    })
+  const getProjects =async()=>{
+    try {
+      const answer = await axiosClient.get('/api/projects')
+        dispatch({
+          type: GET_PROJECTS,
+          payload: answer.data.projects
+        })
+    } catch (error) {
+      const alert = {
+        msg: 'An Error has Occured',
+        category: 'alerta-error'
+      }
+      dispatch({
+        type: ERROR_PROJECT,
+        payload: alert
+      })
+    }
    
   }
 
   //add new project
-  const addProject =project=>{
-    project.id = uuid.v4()
-    dispatch({
-      type: ADD_PROJECT,
-      payload: project
-    })
-  }
+  const addProject =async project=>{
 
+    try {
+      const answer = await axiosClient.post('/api/projects',project)
+        dispatch({
+          type: ADD_PROJECT,
+          payload: answer.data
+        })
+    } catch (error) {
+      const alert = {
+        msg: 'An Error has Occured while adding new Project',
+        category: 'alerta-error'
+      }
+      dispatch({
+        type: ERROR_PROJECT,
+        payload: alert
+      })
+    }
+  }
+  
   // Validate form for error
   const showError = ()=>{
     dispatch({
       type: VALIDATE_FORM
     })
   }
-
+  
   //Select the project to work on from the project list
   const currentProject = projectId=>{
     dispatch({
@@ -71,13 +88,25 @@ const ProjectState = props => {
       payload : projectId 
     })
   }
-
+  
   //Delete the selected project
-  const deleteProject = projectId =>{
-    dispatch({
-      type : DELETE_PROJECT,
-      payload : projectId
-    })
+  const deleteProject = async projectId =>{
+    try {
+      await axiosClient.delete( `/api/projects/${projectId}`)
+      dispatch({
+        type : DELETE_PROJECT,
+        payload : projectId
+      })
+    } catch (error) {
+      const alert = {
+        msg: 'An Error has Occured while deleting',
+        category: 'alerta-error'
+      }
+      dispatch({
+        type: ERROR_PROJECT,
+        payload: alert
+      })
+    }
   }
 
   return(
@@ -87,6 +116,7 @@ const ProjectState = props => {
         form: state.form,
         errorform : state.errorform,
         project : state.project,
+        message: state.message,
         addNewProject,
         getProjects,
         addProject,

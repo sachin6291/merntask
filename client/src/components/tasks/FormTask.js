@@ -68,12 +68,11 @@ const FormTask = () => {
       clearTask()
     }else{
     //add task to the state of the task context
-    taskname.projectId = selectedproject.id
-    taskname.status = false
+    taskname.project = selectedproject._id
     addTasks(taskname)
     }
     //get and filter all tasks to only the ones needed adding the new one to it
-    getTasks(selectedproject.id)
+    getTasks(selectedproject._id)
 
     //reset the form input
     setTaskname({

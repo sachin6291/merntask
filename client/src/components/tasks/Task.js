@@ -13,22 +13,20 @@ const Task = ({task}) => {
   const tasksContext = useContext(taskContext)
   const { deleteTask, getTasks, changeTaskState, editCurrentTask} = tasksContext
   
-  const { name, id} = task
-  
 
   //function to delete task
   const taskDelete = id =>{ 
     deleteTask(id)
     getTasks(selectedProject.id)
 }
-
-  //function that changes the compleation state of each task
-  const changeState = task =>{
-    if(task.status){
-      task.status=false
-    }else{
-      task.status=true
-    }
+//function that changes the compleation state of each task
+const changeState = task =>{
+  if(task.status){
+    task.status=false
+  }else{
+    task.status=true
+  }
+  console.log(task)
     changeTaskState(task)
   }
 
@@ -39,7 +37,7 @@ const Task = ({task}) => {
 
   return ( 
     <li className="tarea sombra">
-      <p> {name} </p>
+      <p> {task.name} </p>
     <div className="estado">
       {task.status
       ?
@@ -69,7 +67,7 @@ const Task = ({task}) => {
         <button
           type="button"
           className="btn btn-secundario"
-          onClick = {()=>taskDelete(id) }
+          onClick = {()=>taskDelete(task._id) }
         >Delete</button>
     </div>
     </li>

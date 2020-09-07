@@ -43,7 +43,7 @@ exports.getTasks = async ( req,res)=>{
   
   try {
     //extract the project and validate it
-    const { project } = req.body
+    const { project } = req.query
 
     const currentProject = await Project.findById(project)
     if (!currentProject) {
@@ -122,7 +122,7 @@ exports.deleteTask = async (req, res) => {
 
   try {
 
-    const {project} = req.body
+    const {project} = req.query
 
     //check the id
     let task = await Task.findById(req.params.id)

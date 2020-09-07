@@ -9,7 +9,7 @@ const Project = ({project}) => {
 
   const { currentProject } = projectsContext
 
-  const{name, id}= project
+
 
   //get the tasks state from the context
   const tasksContext = useContext(taskContext)
@@ -28,8 +28,8 @@ const Project = ({project}) => {
       <button
         type="button"
         className="btn btn-blank"
-        onClick = {()=>selectProject(id)}
-      >{name}</button>
+        onClick = {()=>selectProject(project._id)}
+      >{project.name}</button>
     </li>
    );
 }
