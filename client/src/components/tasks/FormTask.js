@@ -4,86 +4,81 @@ import taskContext from '../../context/tasks/taskContext'
 
 const FormTask = () => {
 
-  //get the project state in the context
-  const projectsContext = useContext(projectContext)
-  const { project } = projectsContext
+  // Extract if a project is active
+  const projectsContext = useContext(projectContext);
+  const { project } = projectsContext;
 
-  const tasksContext = useContext(taskContext)
-  const { 
-    taskselected,
-    errortask,
-    addTasks,
-    validateTask,
-    getTasks,
-    updateTask,
-    clearTask
-  } = tasksContext
+  // Get the context function of task
+  const tasksContext = useContext(taskContext);
+  const { taskselected, errortask, addTasks, validateTask, getTasks, updateTask, clearTask } = tasksContext;
 
-  // useEffect to detect if there is any task selected
-  useEffect(()=>{
-    if(taskselected){
-      setTaskname(taskselected)
-    }else{
-      setTaskname({
-        name:''
+  // Effect that checks if there is a task selected
+  useEffect(() => {
+    if (taskselected !== null) {
+      setTaskName(taskselected)
+    } else {
+      setTaskName({
+        name: ''
       })
     }
-  },[taskselected])
+  }, [taskselected]);
 
-  const [taskname, setTaskname] = useState({
-    name: '',
+  // State of form
+  const [taskname, setTaskName] = useState({
+    name: ''
   })
 
-  //destructuring taskname
-  const {name} = taskname
-  
-  // project is null
-  if (!project) return null 
+  // Extract the name from project
+  const { name } = taskname;
 
-  //destructurin of an array of objects
-  const [selectedproject] = project
+  // If no project is selected
+  if (!project) return null;
 
-  const handelChange = e =>{
-    setTaskname({
+  // Array destructuring to get the current project
+  const [selectedproject] = project;
+
+  // Read the Form 
+  const handleChange = e => {
+    setTaskName({
       ...taskname,
-      [e.target.name]:e.target.value
+      [e.target.name]: e.target.value
     })
   }
 
-  const onSubmit = e =>{
-    e.preventDefault()
+  const onSubmit = e => {
+    e.preventDefault();
 
-    //validate
-    if(name.trim() === ''){
-      validateTask()
-      return
+    // Validate
+    if (name.trim() === '') {
+      validateTask();
+      return;
     }
 
-    //check if it is edit or add for the task
-    if(taskselected){
-      //update exixting task
-      updateTask(taskname)
-      
-      //clean taskselected from state
-      clearTask()
-    }else{
-    //add task to the state of the task context
-    taskname.project = selectedproject._id
-    addTasks(taskname)
-    }
-    //get and filter all tasks to only the ones needed adding the new one to it
-    getTasks(selectedproject._id)
+    // Check if it is edit or new task
+    if (taskselected === null) {
+      // add new task to the list
+      taskname.project = selectedproject._id;
+      addTasks(taskname);
+    } else {
+      // Update current task
+      updateTask(taskname);
 
-    //reset the form input
-    setTaskname({
-      name : ''
+      // Delete the selected task from the state
+      clearTask();
+    }
+    // Get filtered tasks from current project
+    getTasks(selectedproject.id);
+
+    // reiniciar el form
+    setTaskName({
+      name: ''
     })
   }
 
-  return ( 
+  return (
     <div className="formulario">
       <form
-      onSubmit={onSubmit}
+        onSubmit={onSubmit}
       >
         <div className="contenedor-input">
           <input
@@ -91,21 +86,23 @@ const FormTask = () => {
             className="input-text"
             placeholder="Task Name..."
             name="name"
-            onChange={handelChange}
-            value = {name}
+            value={name}
+            onChange={handleChange}
           />
         </div>
+
         <div className="contenedor-input">
           <input
             type="submit"
-            className="btn btn-primario brn-submit btn-block"
-            value={taskselected?"Edit Task":"Add Task"} 
+            className="btn btn-primario btn-submit btn-block"
+            value={taskselected ? 'Edit Task' : 'Add Task'}
           />
         </div>
       </form>
-      {errortask?<p className="mensaje error">Task Name is Required</p>:null}
+
+      {errortask ? <p className="mensaje error">Name of the Task is Required</p> : null}
     </div>
-   );
+  );
 }
- 
+
 export default FormTask;
