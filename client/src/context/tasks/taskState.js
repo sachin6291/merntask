@@ -8,7 +8,6 @@ import {
   ADD_TASK,
   VALIDATE_TASK,
   DELETE_TASK,
-  STATE_TASK,
   CURRENT_TASK,
   UPDATE_TASK,
   CLEAN_TASK
@@ -57,32 +56,36 @@ const TaskState = props =>{
     })
   }
   //Delete the task selected
-  const deleteTask = async (taskId, project) =>{
+  const deleteTask = async (id, project) =>{
     try {
-      await axiosClient.delete(`/api/tasks/${taskId}`,{params:{project}})
+      await axiosClient.delete(`/api/tasks/${id}`,{params:{project}})
         dispatch({
           type : DELETE_TASK,
-          payload: taskId
+          payload: id
         })
     } catch (error) {
       console.log(error)
     }
   }
 
-  //Change the compleation state of each thask
   //edit a task
-  const updateTask = task =>{
-    dispatch({
-      type : UPDATE_TASK,
-      payload : task
-    })
+  const updateTask = async task =>{
+    try {
+      const answer = await axiosClient.put(`/api/tasks/${task._id}`, task)
+      dispatch({
+        type : UPDATE_TASK,
+        payload : answer.data.task
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
-  const  changeTaskState = task =>{
-    dispatch({
-      type: STATE_TASK,
-      payload : task
-    })
-  }
+  // const  changeTaskState = task =>{
+  //   dispatch({
+  //     type: STATE_TASK,
+  //     payload : task
+  //   })
+  // }
   
   //pick the selected task to be edited
   const editCurrentTask = task =>{
@@ -108,7 +111,7 @@ const TaskState = props =>{
         addTasks,
         validateTask,
         deleteTask,
-        changeTaskState,
+        // changeTaskState,
         editCurrentTask,
         updateTask,
         clearTask
