@@ -14,7 +14,7 @@ app.use(cors())
 //enable express.json
 app.use(express.json({extended:true}))
 
-//server port different from 3000
+//server PORT different from 3000
 const PORT = process.env.PORT || 4000
 
 //Import Routes
@@ -25,6 +25,6 @@ app.use("/api/tasks", require("./routes/tasks"))
 
 
 //start the app
-app.listen(PORT, ()=>{
-  console.log(`the server is working in the port ${PORT}`)
+app.listen(PORT,'0.0.0.0', ()=>{
+  console.log(`the server is working in the PORT ${PORT}`)
 })
